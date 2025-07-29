@@ -5,7 +5,7 @@ int maxProfit(int* prices, int pricesSize) {
     int minProfit = prices[0];
     int maxProfit = INT_MIN;
 
-    for(int i=0; i<pricesSize; i++){
+    for(int i=1; i<pricesSize; i++){
         if(prices[i]<minProfit){
             minProfit = prices[i];
         }else if(prices[i] - minProfit > maxProfit){
