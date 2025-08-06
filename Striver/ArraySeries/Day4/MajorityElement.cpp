@@ -4,7 +4,7 @@ using namespace std; // avoid std in large codebases since it may lead to confli
 class Solution {
 public:
 
-    int majorElement(vector<int>& nums){
+    const int findCandidate(vector<int>& nums){
         int element;
         int count = 0;
 
@@ -24,20 +24,17 @@ public:
     }
 
     int majorityElement(vector<int>& nums) {
+        if (nums.empty()) return -1;
 
-        int number = majorElement(nums);
+        int candidate = findCandidate(nums);
         int counter = 0;
 
         for(int i = 0; i < nums.size(); i++){
-            if(nums[i] == number) {
+            if(nums[i] == candidate) {
                 counter++ ;
             }
         }
 
-        if(counter > nums.size()/2){
-            return number;
-        }
-        
-        return -1;
+        return (counter > nums.size()/2) ? candidate : -1;
     }
 };
