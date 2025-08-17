@@ -29,7 +29,7 @@ node *insertAtLast(node *head, int data)
 {
     node *temp = (node *)malloc(sizeof(node));
     /*
-    A head pointer is essential for the entire list. 
+    A head pointer is essential for the entire list.
     Using a temporary pointer to traverse, prevents us from losing access to the beginning of the list.
     */
     node *ptr = head;
@@ -52,6 +52,46 @@ node *insertAtLast(node *head, int data)
     return head;
 }
 
+node *insertAtIndex(node *head, int data, int index)
+{
+    node *temp = (node *)malloc(sizeof(node));
+    temp->data = data;
+
+    if (index == 0)
+    {
+        head = insertAtFirst(head, data);
+        return head;
+    }
+
+    node *ptr = head;
+
+    int i = 0;
+
+    while (i != index - 1)
+    {
+        ptr = ptr->next;
+        i++;
+    }
+
+    temp->next = ptr->next;
+    ptr->next = temp;
+
+    return head;
+}
+
+node *insertAfterNode(node *head, node *prevNode, int data)
+{
+    node *temp = (node *)malloc(sizeof(node));
+    temp->data = data;
+
+    node *ptr = head;
+
+    temp->next = prevNode->next;
+    prevNode->next = temp;
+
+    return head;
+}
+
 int checkIfPresent(node *head, int val)
 {
     node *temp = (node *)malloc(sizeof(node));
@@ -69,23 +109,32 @@ int checkIfPresent(node *head, int val)
 
 int main()
 {
-    node *first = (node *)malloc(sizeof(node));
+    node *head = (node *)malloc(sizeof(node));
     node *second = (node *)malloc(sizeof(node));
 
-    first->data = 7;
-    first->next = second;
+    head->data = 7;
+    head->next = second;
     second->data = 8;
     second->next = NULL;
 
-    printList(first);
-    first = insertAtFirst(first, 9);
-    printList(first);
-    insertAtLast(second, 10);
-    printList(first);
+    printList(head);
+    head = insertAtFirst(head, 9);
+    printList(head);
+    head = insertAtLast(head, 10);
+    printList(head);
 
-    int result = checkIfPresent(first, 10);
+    int result = checkIfPresent(head, 10);
     if (result)
-        printf("Present");
+        printf("Present\n");
+
+    head = insertAtIndex(head, 20, 2);
+    printList(head);
+
+    head = insertAtIndex(head, 15, 0);
+    printList(head);
+
+    head = insertAfterNode(head, second, 70);
+    printList(head);
 
     return 0;
 }
