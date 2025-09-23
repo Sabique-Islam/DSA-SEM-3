@@ -56,6 +56,30 @@ int dequeue()
     return val;
 }
 
+int kthDequeue(int k)
+{
+    int val = -1;
+    node *current = front;
+    node *prev = front;
+
+    current = current->next;
+
+    if (front == NULL)
+        return -1;
+    
+    for (int i = 0; i < k - 1; i++)
+    {
+        current = current->next;
+        prev = prev->next;
+    }
+
+    val = current->data;
+
+    prev->next = current->next;
+
+    return val;
+}
+
 void display()
 {
     if (front == NULL)
@@ -74,27 +98,16 @@ void display()
 
 int main()
 {
-    printf("Enqueue 10, 20, 30\n");
     enqueue(10);
     enqueue(20);
     enqueue(30);
-    display();  // should print: 10 20 30
-
-    printf("Dequeue -> %d\n", dequeue()); // removes 10
-    display();  // should print: 20 30
-
-    printf("Enqueue 40\n");
     enqueue(40);
-    display();  // should print: 20 30 40
+    enqueue(50);
+    display();
 
-    printf("Dequeue -> %d\n", dequeue()); // removes 20
-    printf("Dequeue -> %d\n", dequeue()); // removes 30
-    display();  // should print: 40
+    printf("Remove Kth index -> %d\n", kthDequeue(4));
 
-    printf("Dequeue -> %d\n", dequeue()); // removes 40, now empty
-    display();  // should print: Queue is empty
-
-    printf("Terminate Dequeue -> %d\n", dequeue()); // should terminate program
+    display();
 
     return 0;
 }
