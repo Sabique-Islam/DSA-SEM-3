@@ -20,38 +20,56 @@ int main() {
 
     printf("\n=== BANK QUEUE SIMULATION ===\n");
 
-    // Add normal customers
-    enqueue(&bank, 101, "Deposit", 0);
-    enqueue(&bank, 102, "Withdrawal", 0);
-
-    // Add priority customer (should go to front)
-    enqueue(&bank, 201, "Loan", 1);
-
-    // Add another normal
-    enqueue(&bank, 103, "AccountOpen", 0);
-
+    // Add customers with different priorities
+    printf("\n--- Adding Initial Customers ---\n");
+    enqueue(&bank, 101, "Deposit", 2);           // Normal
+    enqueue(&bank, 102, "Withdrawal", 4);        // Medium
+    enqueue(&bank, 103, "Account Opening", 1);   // Normal
+    enqueue(&bank, 104, "Loan Application", 7);  // High
+    
     display(&bank);
 
-    printf("\n--- Serving Customers ---\n");
-    dequeue(&bank);  // should serve priority (201)
-    dequeue(&bank);  // then normal (101)
+    // VIP customer arrives - add with highest priority
+    printf("\n--- VIP Customer Arrives ---\n");
+    enqueue(&bank, 201, "Senior Citizen", 10);   // VIP
     display(&bank);
 
-    // Add new priority again
-    enqueue(&bank, 202, "CreditCard", 1);
-    enqueue(&bank, 203, "KYC", 0);
-
+    // Serve a few customers
+    printf("\n--- Serving Top Priority Customers ---\n");
+    dequeue(&bank);  // Should serve VIP (201)
+    dequeue(&bank);  // Should serve High (104)
     display(&bank);
 
-    // Dequeue all
-    printf("\n--- Serving All ---\n");
-    while (bank.front != NULL)
+    // Add more customers
+    printf("\n--- More Customers Arrive ---\n");
+    enqueue(&bank, 105, "Credit Card", 6);       // High
+    enqueue(&bank, 106, "Statement Request", 3); // Medium
+    display(&bank);
+
+    // Another VIP arrives
+    printf("\n--- Another VIP Arrives ---\n");
+    enqueue(&bank, 202, "Premium Customer", 9);  // VIP
+    display(&bank);
+
+    // Test FIFO within same priority
+    printf("\n--- Testing FIFO within same priority ---\n");
+    enqueue(&bank, 107, "Normal Query 1", 2);    // Normal
+    enqueue(&bank, 108, "Normal Query 2", 2);    // Normal (same priority)
+    enqueue(&bank, 109, "Normal Query 3", 2);    // Normal (same priority)
+    display(&bank);
+
+    // Serve remaining customers
+    printf("\n--- Serving All Remaining Customers ---\n");
+    while (bank.front != NULL){
         dequeue(&bank);
+    }
 
-    // Handle empty case
+    // Try to serve from empty queue
+    printf("\n--- Attempting to Serve from Empty Queue ---\n");
     dequeue(&bank);
-
     display(&bank);
+
+    printf("\n========== Simulation Complete ==========\n");
 
     return 0;
 }

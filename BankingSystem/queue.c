@@ -19,44 +19,55 @@ node *create(int id, char *type, int priority){
     return temp;
 }
 
-// here we give the priority we want to assign the user with.
+// Priority Queue Enqueue: Higher priority goes first, same priority follows FIFO
 void enqueue(queue *q, int id, char *type, int priority){ 
+    // Clamp priority within valid range 0-10
+    if (priority < MIN_PRIORITY) priority = MIN_PRIORITY;
+    if (priority > MAX_PRIORITY) priority = MAX_PRIORITY;
+    
     node *temp = create(id, type, priority);
 
-    // when queue is empty
+    // When queue is empty
     if (q->front == NULL){
         q->front = q->rear = temp;
-        printf("\nCustomer Enqueued with ID -> %d, TYPE -> %s, PRIORITY -> %d\n", id, type, priority);
+        printf("\nCustomer Enqueued -> ID: %d, Service: %s, Priority: %d\n", id, type, priority);
         return;
     }
 
+    // If new customer has higher priority than front, insert at front
     if (priority > q->front->priority){
         temp->next = q->front;
         q->front = temp;
-        printf("\nCustomer Enqueued with ID -> %d, TYPE -> %s, PRIORITY -> %d\n", id, type, priority);
+        printf("\nCustomer Enqueued -> ID: %d, Service: %s, Priority: %d (High Priority - moved to front)\n", id, type, priority);
         return;
     }
 
-    node *new = q->front;
-    while(new->next != NULL && new->next->priority >= priority){
-        new = new->next;
+    // Find position: skip all nod₹es with strictly higher priority
+    // Then skip all nodes with same priority (FIFO within same priority)
+    node *current = q->front;
+    while(current->next != NULL && current->next->priority >= priority){
+        current = current->next;
     }
 
-    temp->next = new->next;
-    new->next = temp;
+    // Insert after current node
+    temp->next = current->next;
+    current->next = temp;
 
+    // Update rear if inserted at end
     if (temp->next == NULL) q->rear = temp;
-    printf("\nCustomer Enqueued with ID -> %d, TYPE -> %s, PRIORITY -> %d\n", id, type, priority);
+    
+    printf("\nCustomer Enqueued -> ID: %d, Service: %s, Priority: %d\n", id, type, priority);
 }
 
 void dequeue(queue *q){
     if (q->front == NULL){
-        printf("No Customers....\n");
+        printf("\nNo Customers in queue....\n");
         return;
     }
 
     node *temp = q->front;
-    printf("Serving Customer %d (%s, priority %d)\n", temp->id, temp->type, temp->priority);
+    printf("\n>>> Serving Customer ID: %d | Service: %s | Priority: %d\n", 
+           temp->id, temp->type, temp->priority);
 
     q->front = q->front->next;
     if (q->front == NULL)
@@ -67,14 +78,14 @@ void dequeue(queue *q){
 
 void display(queue* q) {
     if (q->front == NULL) {
-        printf("Queue is empty.\n");
+        printf("\nQueue is empty.\n");
         return;
     }
 
     node* temp = q->front;
-    printf("\nCurrent Queue:\n");
+    printf("\n--- Current Queue ---\n");
     while (temp != NULL) {
-        printf("[ID: %d, Service: %s, Priority: %d] -> ",temp->id, temp->type, temp->priority);
+        printf("[ID: %d, Service: %s, Priority: %d] -> ", temp->id, temp->type, temp->priority);
         temp = temp->next;
     }
     printf("NULL\n");
