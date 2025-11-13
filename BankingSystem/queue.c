@@ -42,7 +42,7 @@ void enqueue(queue *q, int id, char *type, int priority){
         return;
     }
 
-    // Find position: skip all nod₹es with strictly higher priority
+    // Find position: skip all nodes with strictly higher priority
     // Then skip all nodes with same priority (FIFO within same priority)
     node *current = q->front;
     while(current->next != NULL && current->next->priority >= priority){
@@ -66,8 +66,7 @@ void dequeue(queue *q){
     }
 
     node *temp = q->front;
-    printf("\n>>> Serving Customer ID: %d | Service: %s | Priority: %d\n", 
-           temp->id, temp->type, temp->priority);
+    printf("\n>>> Serving Customer ID: %d | Service: %s | Priority: %d\n",temp->id, temp->type, temp->priority);
 
     q->front = q->front->next;
     if (q->front == NULL)
@@ -83,10 +82,31 @@ void display(queue* q) {
     }
 
     node* temp = q->front;
-    printf("\n--- Current Queue ---\n");
+    int position = 1;
+    printf("  Position | Customer ID | Service Type        | Priority\n\n");
+    
     while (temp != NULL) {
-        printf("[ID: %d, Service: %s, Priority: %d] -> ", temp->id, temp->type, temp->priority);
+        const char *level;
+        if (temp->priority >= 9) level = "VIP";
+        else if (temp->priority >= 6) level = "HIGH";
+        else if (temp->priority >= 3) level = "MED";
+        else level = "NORM";
+        
+        printf("  %-8d | %-11d | %-19s | %d (%s)\n", 
+               position++, temp->id, temp->type, temp->priority, level);
         temp = temp->next;
     }
-    printf("NULL\n");
+    printf("  Total customers in queue: %d\n", position - 1);
+    printf("  Next to be served: Customer ID %d (Priority %d)\n", q->front->id, q->front->priority);
+}
+
+
+int queueLength(queue *q){
+    int count = 0;
+    node *temp = q->front;
+    while(temp != NULL){
+        count++;
+        temp = temp->next;
+    }
+    return count;
 }

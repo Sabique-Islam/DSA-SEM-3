@@ -25,8 +25,8 @@ typedef struct node{
 
 // self explanatory
 typedef struct queue{
-    struct node *front;
-    struct node *rear;
+    struct node *front; //start
+    struct node *rear; //end
 } queue;
 
 // Function declarations
@@ -35,5 +35,6 @@ node *create(int id, char *type, int priority);
 void enqueue(queue *q, int id, char *type, int priority);
 void dequeue(queue *q);
 void display(queue* q);
+int queueLength(queue *q);
 
 #endif // QUEUE_H

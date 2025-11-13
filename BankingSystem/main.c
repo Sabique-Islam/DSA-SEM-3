@@ -11,65 +11,110 @@ Each node stores customer ID and service type. Supports enqueue, dequeue, and pr
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "queue.h"
 
-// AI Generated Test Case
+void displayMenu() {
+    printf("  1. Add Customer to Queue\n");
+    printf("  2. Serve Next Customer\n");
+    printf("  3. Display Current Queue\n");
+    printf("  4. View Priority Information\n");
+    printf("  5. Exit\n");
+    printf("Enter your choice: ");
+}
+
+void displayPriorityInfo() {
+    printf("  Priority Range: 0-10 (0=Lowest, 10=Highest)\n");
+    printf("  ───────────────────────────────────────────────\n");
+    printf("  0-2  : Normal Priority\n");
+    printf("         (Regular queries, Account opening)\n");
+    printf("  3-5  : Medium Priority\n");
+    printf("         (Deposits, Withdrawals, Statements)\n");
+    printf("  6-8  : High Priority\n");
+    printf("         (Loans, Credit Cards, Urgent requests)\n");
+    printf("  9-10 : VIP/Emergency\n");
+    printf("         (Senior Citizens, Premium customers)\n");
+}
+
 int main() {
     queue bank;
     initQueue(&bank);
-
-    printf("\n=== BANK QUEUE SIMULATION ===\n");
-
-    // Add customers with different priorities
-    printf("\n--- Adding Initial Customers ---\n");
-    enqueue(&bank, 101, "Deposit", 2);           // Normal
-    enqueue(&bank, 102, "Withdrawal", 4);        // Medium
-    enqueue(&bank, 103, "Account Opening", 1);   // Normal
-    enqueue(&bank, 104, "Loan Application", 7);  // High
     
-    display(&bank);
-
-    // VIP customer arrives - add with highest priority
-    printf("\n--- VIP Customer Arrives ---\n");
-    enqueue(&bank, 201, "Senior Citizen", 10);   // VIP
-    display(&bank);
-
-    // Serve a few customers
-    printf("\n--- Serving Top Priority Customers ---\n");
-    dequeue(&bank);  // Should serve VIP (201)
-    dequeue(&bank);  // Should serve High (104)
-    display(&bank);
-
-    // Add more customers
-    printf("\n--- More Customers Arrive ---\n");
-    enqueue(&bank, 105, "Credit Card", 6);       // High
-    enqueue(&bank, 106, "Statement Request", 3); // Medium
-    display(&bank);
-
-    // Another VIP arrives
-    printf("\n--- Another VIP Arrives ---\n");
-    enqueue(&bank, 202, "Premium Customer", 9);  // VIP
-    display(&bank);
-
-    // Test FIFO within same priority
-    printf("\n--- Testing FIFO within same priority ---\n");
-    enqueue(&bank, 107, "Normal Query 1", 2);    // Normal
-    enqueue(&bank, 108, "Normal Query 2", 2);    // Normal (same priority)
-    enqueue(&bank, 109, "Normal Query 3", 2);    // Normal (same priority)
-    display(&bank);
-
-    // Serve remaining customers
-    printf("\n--- Serving All Remaining Customers ---\n");
-    while (bank.front != NULL){
-        dequeue(&bank);
+    int choice;
+    int customerId;
+    char serviceType[MAX];
+    int priority;
+    
+    while(1) {
+        displayMenu();
+        
+        if(scanf("%d", &choice) != 1) {
+            // Clear invalid input
+            while(getchar() != '\n');
+            printf("\nInvalid input! Please enter a number.\n");
+            continue;
+        }
+        // Clear input buffer
+        while(getchar() != '\n');
+        
+        switch(choice) {
+            case 1:
+                printf("\n─── Add Customer to Queue ───\n");
+                printf("Enter Customer ID: ");
+                if(scanf("%d", &customerId) != 1) {
+                    while(getchar() != '\n');
+                    printf("Invalid ID! Operation cancelled.\n");
+                    break;
+                }
+                while(getchar() != '\n');
+                
+                printf("Enter Service Type: ");
+                if(fgets(serviceType, MAX, stdin) != NULL) {
+                    // Remove newline character if present
+                    size_t len = 0;
+                    while(serviceType[len] != '\0' && serviceType[len] != '\n') len++;
+                    if(serviceType[len] == '\n') serviceType[len] = '\0';
+                }
+                
+                printf("Enter Priority (0-10): ");
+                if(scanf("%d", &priority) != 1) {
+                    while(getchar() != '\n');
+                    printf("Invalid priority! Operation cancelled.\n");
+                    break;
+                }
+                while(getchar() != '\n');
+                
+                enqueue(&bank, customerId, serviceType, priority);
+                break;
+                
+            case 2:
+                printf("\n─── Serve Next Customer ───\n");
+                dequeue(&bank);
+                break;
+                
+            case 3:
+                display(&bank);
+                break;
+                
+            case 4:
+                displayPriorityInfo();
+                break;
+                
+            case 5:
+                printf("Thank you for using Bank Queue System!\n");
+                
+                // Clean up remaining customers
+                while(bank.front != NULL) {
+                    node *temp = bank.front;
+                    bank.front = bank.front->next;
+                    free(temp);
+                }
+                return 0;
+                
+            default:
+                printf("\nInvalid choice! Please select 1-5.\n");
+        }
     }
-
-    // Try to serve from empty queue
-    printf("\n--- Attempting to Serve from Empty Queue ---\n");
-    dequeue(&bank);
-    display(&bank);
-
-    printf("\n========== Simulation Complete ==========\n");
-
+    
     return 0;
 }
