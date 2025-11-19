@@ -98,6 +98,39 @@ bool searchTrie(node *root, char *signedText){
     return temp->flag;
 }
 
+bool nodeHasChildren(node *head){
+    if (!head) return false;
+    for (int i = 0; i < MAX; i++){
+        // there's at least 1 child
+        if (head->links[i] != NULL) return true;
+    }
+    return false;
+}
+
+node *deleteStrRec(node *head, unsigned char *text, bool *isDeleted){
+    if (head == NULL) return head;
+    if (*text == '\0'){
+        if (head->flag){
+            head->flag = false;
+            *isDeleted = true;
+
+            if (nodeHasChildren(head) == false){
+                free(head);
+                head = NULL;
+            }
+        }
+        return head;
+    }
+
+    head->links[text[0]] = deleteStrRec(head->links[0], text+1, isDeleted);
+
+    if (isDeleted && !nodeHasChildren(head) && !head->flag){
+        free(head);
+        head = NULL;
+    }
+    return head;
+}
+
 bool deleteStr(node **root, char *signedText){
     if (!*root) return false;
 
@@ -105,7 +138,8 @@ bool deleteStr(node **root, char *signedText){
     int length = strlen(signedText);
     bool result = false; // TRUE : if we delete something
 
-    *root = deleteStrRec(root, text, &result);
+    *root = deleteStrRec(*root, text, &result);
+    return result;
 }
 
 int main(){
